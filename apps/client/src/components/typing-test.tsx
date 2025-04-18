@@ -6,7 +6,7 @@ import { Button } from "./ui/button"
 import { Badge } from "./ui/badge"
 import { Keyboard, RefreshCw, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { fetchSentence } from "@/lib/api"
 import { Sentence } from "@/lib/types/sentence"
 
@@ -56,6 +56,7 @@ export default function TypingTest({
     isFocused: false,
     showFocusMessage: false,
   })
+  const queryClient = useQueryClient()
 
   const { data, isLoading, error, refetch } = useQuery<Sentence>({
     queryKey: ["sentence"],
@@ -69,8 +70,7 @@ export default function TypingTest({
   const focusMessageTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const resetTest = useCallback(() => {
-    const randomText =
-      data.sentences.join(" ")
+    const randomText = data.sentences.join(" ")
     setState({
       text: randomText,
       input: "",
@@ -94,6 +94,11 @@ export default function TypingTest({
       }
     }, 0)
   }, [data.sentences])
+
+  const invalidateAndReset = () => {
+    queryClient.invalidateQueries({ queryKey: ["sentence"] })
+    resetTest()
+  }
 
   useEffect(() => {
     resetTest()
@@ -262,7 +267,7 @@ export default function TypingTest({
         <Button
           variant="ghost"
           size="icon"
-          onClick={resetTest}
+          onClick={invalidateAndReset}
           aria-label="Reset test"
         >
           {state.status === "finished" ? (
@@ -350,7 +355,7 @@ export default function TypingTest({
 
           {state.status === "finished" && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-md transition-all duration-500 ease-in-out">
-              <Button onClick={resetTest} className="font-mono">
+              <Button onClick={invalidateAndReset} className="font-mono">
                 Try Again
               </Button>
             </div>
