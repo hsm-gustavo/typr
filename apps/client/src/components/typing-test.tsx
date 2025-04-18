@@ -6,6 +6,9 @@ import { Button } from "./ui/button"
 import { Badge } from "./ui/badge"
 import { Keyboard, RefreshCw, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import { fetchSentence } from "@/lib/api"
+import { Sentence } from "@/lib/types/sentence"
 
 const sampleTexts = [
   "The quick brown fox jumps over the lazy dog. This pangram contains every letter of the English alphabet at least once.",
@@ -32,7 +35,11 @@ type TestState = {
   showFocusMessage: boolean
 }
 
-export default function TypingTest() {
+export default function TypingTest({
+  initialSentence,
+}: {
+  initialSentence: Sentence
+}) {
   const [state, setState] = useState<TestState>({
     text: "",
     input: "",
@@ -50,13 +57,20 @@ export default function TypingTest() {
     showFocusMessage: false,
   })
 
+  const { data, isLoading, error, refetch } = useQuery<Sentence>({
+    queryKey: ["sentence"],
+    queryFn: fetchSentence,
+    refetchOnWindowFocus: false,
+    initialData: initialSentence,
+  })
+
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const focusMessageTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const resetTest = useCallback(() => {
     const randomText =
-      sampleTexts[Math.floor(Math.random() * sampleTexts.length)]
+      data.sentences.join(" ")
     setState({
       text: randomText,
       input: "",
@@ -79,7 +93,7 @@ export default function TypingTest() {
         inputRef.current.focus()
       }
     }, 0)
-  }, [])
+  }, [data.sentences])
 
   useEffect(() => {
     resetTest()
@@ -210,7 +224,6 @@ export default function TypingTest() {
             </span>
           )
         })}
-
         {state.isFocused && state.status !== "finished" && (
           <span
             className="absolute inline-block w-[2px] h-[1.2em] bg-primary animate-blink"
