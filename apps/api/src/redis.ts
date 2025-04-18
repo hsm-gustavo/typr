@@ -2,7 +2,7 @@ import Redis from "ioredis"
 import dotenv from "dotenv"
 import path from "path"
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") })
+dotenv.config()
 
 export const redis = new Redis({
   host: process.env.REDIS_HOST || "127.0.0.1",

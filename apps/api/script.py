@@ -11,6 +11,11 @@ for filename in os.listdir(folder_path):
         category = filename.replace(".txt", "")  # e.g., nouns.txt → nouns
         file_path = os.path.join(folder_path, filename)
 
+        if r.exists(category):
+            r.delete(category)
+            print(f"🗑️ Existing key '{category}' deleted.")
+
+
         with open(file_path, "r") as file:
             words = [line.strip() for line in file if line.strip()]
             for word in words:
