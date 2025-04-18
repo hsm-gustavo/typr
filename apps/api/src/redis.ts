@@ -5,6 +5,8 @@ export const redis = new Redis({
   password: process.env.REDIS_PASSWORD,
 })
 
+console.log("REDIS_PASS", process.env.REDIS_PASSWORD)
+
 export async function getWordList(category: string): Promise<string[]> {
   return await redis.smembers(category)
 }
