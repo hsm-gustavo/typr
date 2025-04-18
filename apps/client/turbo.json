@@ -1,14 +1,10 @@
 {
-  "extends": [
-    "//"
-  ],
+  "extends": ["//"],
   "tasks": {
     "build": {
       "env": ["NEXT_PUBLIC_API_URL"],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "inputs": [".env"]
     }
   }
 }
