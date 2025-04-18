@@ -5,6 +5,7 @@
     "build": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "dependsOn": ["^build"],
+      "env": ["REDIS_PASSWORD", "REDIS_HOST", "PORT"],
       "outputs": [
         "build/**",
         ".vercel/**",

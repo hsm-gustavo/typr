@@ -2,7 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "env": ["PORT"],
+      "env": ["PORT", "REDIS_HOST", "REDIS_URL"],
       "outputs": ["dist/**"]
     }
   }
